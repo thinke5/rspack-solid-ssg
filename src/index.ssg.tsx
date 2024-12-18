@@ -6,6 +6,7 @@ import fs from 'node:fs'
 // @ts-ignore
 import path from 'node:path'
 import { getAllPaths } from '@fsr/server'
+import { generateHydrationScript } from 'solid-js/web'
 import { RouteBasePah } from '~/config'
 import { render } from './index.server'
 
@@ -16,7 +17,8 @@ const dirname: string = __dirname
 async function SSG() {
   // 已经渲染过的页面
   const randeredPage = new Map<string, string>()
-  const saveDirPath = path.join(dirname, `../html/`)
+  const tmplentHTML: string = fs.readFileSync(path.join(dirname, '../web/index.html')).toString()
+  const saveDirPath = path.join(dirname, `../web/`)
   // 清理文件
   fs.rmSync(saveDirPath, {
     recursive: true,
@@ -30,9 +32,10 @@ async function SSG() {
     }
     const fullPath = RouteBasePah + pagePath
     const pageHtml = await render(fullPath)
-    const tmplentHTML: string = fs.readFileSync(path.join(dirname, '../web/index.html')).toString()
 
-    const html = tmplentHTML.replace('<!--app-content-->', () => pageHtml) // 要用函数，否则 `$符`会丢失
+    const html = tmplentHTML
+      .replace('<!--app-content-->', () => pageHtml) // 必须要用函数，否则 `$符`会丢失
+      .replace('<!--app-head-->', () => generateHydrationScript())
 
     // 保存到磁盘
     const fileName = pagePath.endsWith('/') ? `${pagePath}index` : `${pagePath}/index`
