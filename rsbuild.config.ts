@@ -66,7 +66,7 @@ const ProjectConfig: any = defineConfig(({ envMode }) => {
         'import.meta.env.PUBLIC__ProjectName': JSON.stringify(projectName),
         'import.meta.env.envMode': JSON.stringify(envMode),
         'import.meta.env.PUBLIC_BUILD_TIME': JSON.stringify(dayjs().format('YYYY-MM-DD HH:mm:ss')),
-        'import.meta.env.PUBLIC_BUILD_V': JSON.stringify(!isDEV ? build_version : '0.0.0-dev'),
+        'import.meta.env.PUBLIC_BUILD_V': JSON.stringify(!isDEV ? `${build_version}-${ENV.BK_CI_BUILD_NO}` : '0.0.0-dev'),
       },
     },
     server: {
@@ -104,6 +104,8 @@ const ProjectConfig: any = defineConfig(({ envMode }) => {
 
         appendPlugins(UnoCSSRspackPlugin())
         appendPlugins(FRTrspackPlugin())
+        // 默认的设置可能会影响虚拟模块，所以这里需要手动设置
+        config.watchOptions.ignored = /\.git|node_modules\/[^.]|node_modules\/\.pnpm/
       },
     },
     dev: {

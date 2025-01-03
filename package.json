@@ -55,5 +55,10 @@
       "esbuild": "latest",
       "unplugin": "latest"
     }
-  }
+  },
+  "browserslist": [
+    "android>=73",
+    "ios>=13.1",
+    "not ie>0"
+  ]
 }
