@@ -89,23 +89,15 @@ const ProjectConfig: any = defineConfig(({ envMode }) => {
     },
     tools: {
       postcss: { postcssOptions: { plugins: [postcss_plugin_rpx2var()] } },
-      rspack: (config, { appendPlugins }) => {
-        if (process.env.RSDOCTOR === 'true') {
-          appendPlugins(
-            new RsdoctorRspackPlugin({
-              // 插件选项
-              mode: 'brief',
-              supports: {
-                generateTileGraph: true,
-              },
-            }),
-          )
-        }
-
-        appendPlugins(UnoCSSRspackPlugin())
-        appendPlugins(FRTrspackPlugin())
-        // 默认的设置可能会影响虚拟模块，所以这里需要手动设置
-        config.watchOptions.ignored = /\.git|node_modules\/[^.]|node_modules\/\.pnpm/
+      rspack: {
+        plugins: [
+          FRTrspackPlugin(),
+          UnoCSSRspackPlugin(),
+          process.env.RSDOCTOR === 'true' && new RsdoctorRspackPlugin({ mode: 'brief', supports: { generateTileGraph: true } }),
+        ],
+        watchOptions: {
+          ignored: /\.git|node_modules\/[^.]|node_modules\/\.pnpm/, // 默认的设置可能会影响虚拟模块，所以这里需要手动设置
+        },
       },
     },
     dev: {
