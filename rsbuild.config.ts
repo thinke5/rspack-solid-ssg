@@ -70,8 +70,9 @@ const ProjectConfig: any = defineConfig(({ envMode }) => {
       },
     },
     server: {
+      // host: 'mydev.qq.com',
       base: basePath,
-      port: 8756,
+      port: 18756,
       printUrls(params) {
         params.routes = params.routes.map((v) => {
           v.pathname = basePath
